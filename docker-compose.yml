@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:6333/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # vLLM Inference Server
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: rag_vllm
+    ports:
+      - "8080:8000"
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+    volumes:
+      - ./models:/root/.cache/huggingface
+    command: >
+      --model ${LLM_MODEL:-Qwen/Qwen2.5-7B-Instruct} --dtype float16 --max-model-len 8192 --gpu-memory-utilization 0.85 --enable-prefix-caching --trust-remote-code
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # RAG API Backend
+  rag-api:
+    build: ./api
+    container_name: rag_api
+    ports:
+      - "8000:8000"
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - VLLM_HOST=vllm
+      - VLLM_PORT=8000
+      - EMBEDDING_MODEL=intfloat/multilingual-e5-large
+      - COLLECTION_NAME=rag_ig2i
+      - LLM_MODEL=${LLM_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+    volumes:
+      - ./donnees_IG2I:/data
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      vllm:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend niveau1 - Usagers
+  frontend-niveau1:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - LEVEL=niveau1
+    container_name: rag_frontend_niveau1
+    ports:
+      - "5173:80"
+    environment:
+      - API_URL=http://rag-api:8000
+    depends_on:
+      - rag-api
+    restart: unless-stopped
+
+  # Frontend niveau2 - Direction
+  frontend-niveau2:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - LEVEL=niveau2
+    container_name: rag_frontend_niveau2
+    ports:
+      - "5174:80"
+    environment:
+      - API_URL=http://rag-api:8000
+    depends_on:
+      - rag-api
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:
+
+
+networks:
+  default:
+    name: rag-network

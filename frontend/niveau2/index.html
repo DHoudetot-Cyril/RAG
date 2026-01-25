@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Direction IG2I</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>Assistant Direction IG2I</h1>
+            <div class="header-actions">
+                <button id="toggleSources" class="icon-btn" title="Afficher/Masquer sources">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                </button>
+                <button id="exportBtn" class="icon-btn" title="Exporter">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <main class="chat-container" id="chatContainer">
+                <div class="welcome-message">
+                    <p>👔 Bienvenue dans l'espace Direction.</p>
+                    <p>Accès complet à tous les documents avec sources détaillées.</p>
+                </div>
+            </main>
+
+            <aside class="sources-panel" id="sourcesPanel">
+                <h2>Sources</h2>
+                <div class="sources-list" id="sourcesList">
+                    <p class="no-sources">Les sources apparaîtront ici</p>
+                </div>
+            </aside>
+        </div>
+
+        <footer class="input-container">
+            <form id="chatForm" class="input-form">
+                <input type="text" id="userInput" placeholder="Posez votre question..." autocomplete="off" required>
+                <button type="button" id="copyBtn" class="icon-btn-small" title="Copier dernière réponse">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                </button>
+                <button type="submit" id="sendBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" />
+                    </svg>
+                </button>
+            </form>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

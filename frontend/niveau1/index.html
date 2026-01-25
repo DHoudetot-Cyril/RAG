@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant IG2I</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>Assistant IG2I</h1>
+        </header>
+        
+        <main class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <p>👋 Bonjour ! Je suis votre assistant IG2I.</p>
+                <p>Posez-moi une question sur les documents.</p>
+            </div>
+        </main>
+        
+        <footer class="input-container">
+            <form id="chatForm" class="input-form">
+                <input 
+                    type="text" 
+                    id="userInput" 
+                    placeholder="Posez votre question..." 
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" id="sendBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z"/>
+                    </svg>
+                </button>
+            </form>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
