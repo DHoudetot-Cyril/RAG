@@ -48,6 +48,9 @@ donnees_IG2I/*
 !donnees_IG2I/.keep
 qdrant_data/
 _bmad-output/
+_bmad/*
+.agent/*
+.claude/*
 .gemini/
 
 # OS
