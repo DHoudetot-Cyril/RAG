@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     # vLLM Server
     vllm_host: str = os.getenv("VLLM_HOST", "localhost")
     vllm_port: int = int(os.getenv("VLLM_PORT", "8000"))
-    llm_model: str = os.getenv("LLM_MODEL", "Qwen/Qwen2.5-7B-Instruct")
+    llm_model: str = os.getenv("LLM_MODEL", "cyankiwi/Qwen3-30B-A3B-Instruct-2507-AWQ-4bit")
     
     # Embedding
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-large")

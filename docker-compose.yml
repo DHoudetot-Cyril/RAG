@@ -30,7 +30,7 @@ services:
     volumes:
       - ./models:/root/.cache/huggingface
     command: >
-      --model ${LLM_MODEL:-Qwen/Qwen2.5-7B-Instruct} --dtype float16 --max-model-len 8192 --gpu-memory-utilization 0.85 --enable-prefix-caching --trust-remote-code
+      --model ${LLM_MODEL:-cyankiwi/Qwen3-30B-A3B-Instruct-2507-AWQ-4bit} --quantization awq --dtype float16 --max-model-len 8192 --gpu-memory-utilization 0.90 --enable-prefix-caching --trust-remote-code
     deploy:
       resources:
         reservations:
@@ -59,7 +59,7 @@ services:
       - VLLM_PORT=8000
       - EMBEDDING_MODEL=intfloat/multilingual-e5-large
       - COLLECTION_NAME=rag_ig2i
-      - LLM_MODEL=${LLM_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+      - LLM_MODEL=${LLM_MODEL:-cyankiwi/Qwen3-30B-A3B-Instruct-2507-AWQ-4bit}
     volumes:
       - ./donnees_IG2I:/data
     depends_on:
