@@ -1,12 +1,9 @@
-FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
+FROM pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime
 
 WORKDIR /app
 
-# Install Python and system dependencies for Docling
+# Install system dependencies for Docling
 RUN apt-get update && apt-get install -y \
-    python3.11 \
-    python3-pip \
-    python3.11-venv \
     curl \
     build-essential \
     libpoppler-cpp-dev \
@@ -14,16 +11,10 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
     libmagic1 \
-    && rm -rf /var/lib/apt/lists/* \
-    && ln -s /usr/bin/python3.11 /usr/bin/python
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
 COPY requirements.txt .
-
-# Install torch with CUDA support first
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cu121
-
-# Install other packages
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
