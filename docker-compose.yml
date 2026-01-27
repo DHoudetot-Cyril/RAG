@@ -30,7 +30,7 @@ services:
     volumes:
       - ./models:/root/.cache/huggingface
     command: >
-      --model ${LLM_MODEL:-cyankiwi/Qwen3-30B-A3B-Instruct-2507-AWQ-4bit} --quantization compressed-tensors --dtype float16 --max-model-len 8192 --gpu-memory-utilization 0.90 --enable-prefix-caching --trust-remote-code
+      --model ${LLM_MODEL:-cyankiwi/Qwen3-30B-A3B-Instruct-2507-AWQ-4bit} --quantization compressed-tensors --dtype float16 --max-model-len 8192 --gpu-memory-utilization 0.99 --enable-prefix-caching --trust-remote-code
     deploy:
       resources:
         reservations:
