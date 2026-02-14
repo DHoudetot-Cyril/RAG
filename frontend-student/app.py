@@ -4,9 +4,9 @@ import os
 
 # Configuration
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
-st.set_page_config(page_title="RAG École - Élève", page_icon="🎓")
+st.set_page_config(page_title="RAG Administration - Élève", page_icon="ℹ️")
 
-st.title("🎓 Assistant Élève")
+st.title("ℹ️ Assistant Administratif")
 
 # Chat Interface
 if "messages" not in st.session_state:
@@ -16,7 +16,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Posez votre question sur le cours..."):
+if prompt := st.chat_input("Une question sur les stages, le règlement, les dates ?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)

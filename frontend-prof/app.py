@@ -4,9 +4,9 @@ import os
 
 # Configuration
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
-st.set_page_config(page_title="RAG École - Professeur", page_icon="👨‍🏫", layout="wide")
+st.set_page_config(page_title="RAG Administration - Direction", page_icon="🏢", layout="wide")
 
-st.title("👨‍🏫 Espace Professeur / Direction")
+st.title("🏢 Espace Direction")
 
 tab1, tab2 = st.tabs(["💬 Chat & Vérification", "📚 Base Documentaire"])
 
@@ -15,7 +15,7 @@ with tab1:
     
     with col1:
         st.subheader("Paramètres")
-        level_access = st.radio("Niveau de recherche", ["level1", "level2"], format_func=lambda x: "Niveau 1 (Élève)" if x == "level1" else "Niveau 2 (Direction)")
+        level_access = st.radio("Niveau de recherche", ["level1", "level2"], format_func=lambda x: "Niveau 1 (Public/Élèves)" if x == "level1" else "Niveau 2 (Interne/Direction)")
     
     with col2:
         st.subheader("Chat")

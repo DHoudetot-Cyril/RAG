@@ -15,7 +15,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("Ajouter des Documents")
     uploaded_files = st.file_uploader("Choisir des fichiers PDF", type=["pdf"], accept_multiple_files=True)
-    level = st.selectbox("Niveau d'accès", ["level1", "level2"], format_func=lambda x: "Niveau 1 (Élève)" if x == "level1" else "Niveau 2 (Direction)")
+    level = st.selectbox("Cible du document", ["level1", "level2"], format_func=lambda x: "Niveau 1 (Public/Élèves)" if x == "level1" else "Niveau 2 (Interne/Direction)")
     
     if st.button("Ingérer les documents"):
         if uploaded_files:
