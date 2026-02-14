@@ -4,3 +4,7 @@ qdrant-client
 httpx
 pydantic
 python-multipart
+sentence-transformers
+pymupdf
+numpy
+scikit-learn

@@ -3,8 +3,11 @@ from pydantic import BaseModel
 import os
 import httpx
 from rag_engine import search_and_generate
+from ingestion_service import IngestionService
+import shutil
 
 app = FastAPI(title="RAG École API")
+ingestion_service = IngestionService()
 
 # Environment Variables
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
@@ -39,5 +42,15 @@ async def ingest_document(file: UploadFile = File(...), level: str = Form(...)):
     if level not in ["level1", "level2"]:
         raise HTTPException(status_code=400, detail="Invalid level")
     
-    # Placeholder for Ingestion logic
-    return {"status": "success", "filename": file.filename, "level": level}
+    # Save temp file
+    temp_filename = f"temp_{file.filename}"
+    with open(temp_filename, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    try:
+        result = ingestion_service.process_pdf(temp_filename, level, file.filename)
+    finally:
+        if os.path.exists(temp_filename):
+            os.remove(temp_filename)
+            
+    return result
