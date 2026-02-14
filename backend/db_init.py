@@ -14,7 +14,7 @@ def init_db():
         if not client.collection_exists(collection_name):
             client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=768, distance=Distance.COSINE), # Assuming e5-base/large
+                vectors_config=VectorParams(size=1024, distance=Distance.COSINE), # intfloat/multilingual-e5-large
             )
             print(f"Collection {collection_name} created.")
         else:
