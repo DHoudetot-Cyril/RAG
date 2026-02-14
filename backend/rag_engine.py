@@ -24,11 +24,11 @@ async def search_and_generate(query: str, level: str):
     
     hits = []
     for col in collections_to_search:
-        results = client.search(
+        results = client.query_points(
             collection_name=col,
-            query_vector=query_embedding.tolist(),
+            query=query_embedding.tolist(),
             limit=3
-        )
+        ).points
         for res in results:
             hits.append(res)
             
