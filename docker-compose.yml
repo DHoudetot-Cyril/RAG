@@ -64,11 +64,11 @@ services:
     networks:
       - rag-network
 
-  # 5. Frontend Professor (Chat + Docs)
-  frontend-prof:
+  # 5. Frontend Direction (Chat + Docs)
+  frontend-direction:
     build:
-      context: ./frontend-prof
-    container_name: rag-frontend-prof
+      context: ./frontend-direction
+    container_name: rag-frontend-direction
     environment:
       - BACKEND_URL=http://backend:8080
     ports:

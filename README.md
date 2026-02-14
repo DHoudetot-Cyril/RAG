@@ -13,7 +13,7 @@ Le projet est entièrement conteneurisé avec Docker et se compose de 6 services
 | **Qdrant**         | Qdrant            | Base de données vectorielle pour le stockage des documents.  | `6333`      |
 | **Ingestion UI**   | Streamlit         | Interface d'administration pour uploader et ingérer les PDF. | `8503`      |
 | **Frontend Élève** | Streamlit         | Interface de chat pour les étudiants (accès restreint).      | `8501`      |
-| **Frontend Prof**  | Streamlit         | Interface de chat pour les professeurs (accès complet).      | `8502`      |
+| **Frontend Dir**   | Streamlit         | Interface de chat pour la Direction (accès complet).         | `8502`      |
 
 ## 🚀 Prérequis
 
@@ -73,7 +73,7 @@ Accédez à **[http://localhost:8501](http://localhost:8501)**.
 *   Posez des questions sur les documents de **Niveau 1**.
 *   *Test de sécurité* : Essayez de demander des infos confidentielles (Niveau 2), le système ne devrait pas répondre.
 
-### 3. Interface Professeur
+### 3. Espace Direction
 Accédez à **[http://localhost:8502](http://localhost:8502)**.
 *   Posez des questions sur **tous** les documents (Niveau 1 + Niveau 2).
 *   Onglet "Documents" : Permet de visualiser les fichiers disponibles (fonctionnalité à venir).
