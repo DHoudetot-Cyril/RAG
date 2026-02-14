@@ -36,7 +36,7 @@ with col1:
 
 with col2:
     st.subheader("Maintenance")
-    st.danger("Zone de Danger")
+    st.error("Zone de Danger")
     if st.button("Effacer TOUTE la collection Niveau 1", type="primary"):
         st.error("Fonctionnalité non implémentée pour sécurité.")
     
