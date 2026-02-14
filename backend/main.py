@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from pydantic import BaseModel
 import os
 import httpx
+from rag_engine import search_and_generate
 
 app = FastAPI(title="RAG École API")
 
@@ -24,15 +25,14 @@ async def chat_student(request: ChatRequest):
     if request.level != "level1":
         raise HTTPException(status_code=403, detail="Students can only access Level 1.")
     
-    # Placeholder for RAG logic
-    return {"response": f"Student response for: {request.message}", "source": "Level 1 Doc"}
+    result = await search_and_generate(request.message, "level1")
+    return result
 
 @app.post("/chat/prof")
 async def chat_prof(request: ChatRequest):
     # Profs can access Level 1 and Level 2
-    
-    # Placeholder for RAG logic
-    return {"response": f"Prof response for: {request.message}", "source": f"Level {request.level} Doc"}
+    result = await search_and_generate(request.message, request.level)
+    return result
 
 @app.post("/ingest")
 async def ingest_document(file: UploadFile = File(...), level: str = Form(...)):
