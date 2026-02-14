@@ -1,0 +1,101 @@
+services:
+  # 1. GPU Inference Engine (vLLM)
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: rag-vllm
+    runtime: nvidia
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+    volumes:
+      - huggingface_cache:/root/.cache/huggingface
+    ports:
+      - "8000:8000"
+    command: "--model Qwen/Qwen2.5-7B-Instruct --gpu-memory-utilization 0.85 --max-model-len 4096"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    networks:
+      - rag-network
+
+  # 2. Vector Database (Qdrant)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - rag-network
+
+  # 3. Backend API (FastAPI)
+  backend:
+    build:
+      context: ./backend
+    container_name: rag-backend
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - VLLM_HOST=vllm
+      - VLLM_PORT=8000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - qdrant
+      - vllm
+    networks:
+      - rag-network
+
+  # 4. Frontend Student (Chat Only)
+  frontend-student:
+    build:
+      context: ./frontend-student
+    container_name: rag-frontend-student
+    environment:
+      - BACKEND_URL=http://backend:8080
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - rag-network
+
+  # 5. Frontend Professor (Chat + Docs)
+  frontend-prof:
+    build:
+      context: ./frontend-prof
+    container_name: rag-frontend-prof
+    environment:
+      - BACKEND_URL=http://backend:8080
+    ports:
+      - "8502:8501" # Mapped to 8502 on host
+    depends_on:
+      - backend
+    networks:
+      - rag-network
+
+  # 6. Ingestion UI (Admin)
+  ingestion-ui:
+    build:
+      context: ./ingestion-ui
+    container_name: rag-ingestion-ui
+    environment:
+      - BACKEND_URL=http://backend:8080
+    ports:
+      - "8503:8501" # Mapped to 8503 on host
+    depends_on:
+      - backend
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+  huggingface_cache:
