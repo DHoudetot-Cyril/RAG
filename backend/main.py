@@ -54,3 +54,44 @@ async def ingest_document(file: UploadFile = File(...), level: str = Form(...)):
             os.remove(temp_filename)
             
     return result
+
+@app.get("/documents")
+async def list_documents():
+    """Retourne la liste des documents ingérés par collection."""
+    from qdrant_client import QdrantClient
+    client = QdrantClient(host=QDRANT_HOST, port=int(QDRANT_PORT))
+    
+    collections = {
+        "level1": "level1_usagers",
+        "level2": "level2_direction"
+    }
+    
+    result = {}
+    for level, col_name in collections.items():
+        try:
+            # Scroll through all points to get unique sources
+            seen_sources = {}
+            offset = None
+            while True:
+                scroll_result = client.scroll(
+                    collection_name=col_name,
+                    limit=100,
+                    offset=offset,
+                    with_payload=["source"],
+                    with_vectors=False
+                )
+                points, next_offset = scroll_result
+                for point in points:
+                    source = point.payload.get("source", "Inconnu")
+                    if source not in seen_sources:
+                        seen_sources[source] = 0
+                    seen_sources[source] += 1
+                if next_offset is None:
+                    break
+                offset = next_offset
+            
+            result[level] = [{"source": src, "chunks": count} for src, count in seen_sources.items()]
+        except Exception as e:
+            result[level] = []
+    
+    return result
