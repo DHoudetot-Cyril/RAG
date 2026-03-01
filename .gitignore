@@ -20,3 +20,8 @@ _bmad-output/
 .agent/*
 _bmad/*
 .claude/*
+test_qdrant.py
+lscpu
+numactl--hardware
+nvidia-smi-q
+topo-m
