@@ -1,0 +1,13 @@
+[
+  {"role": "student", "question": "Dans quel délai dois-je justifier une absence ?", "expected": "reglement-interieur.md"},
+  {"role": "student", "question": "Est-ce que je peux utiliser mon téléphone en classe ?", "expected": "reglement-interieur.md"},
+  {"role": "student", "question": "À quelle heure ouvre la cantine ?", "expected": "reglement-interieur.md"},
+  {"role": "student", "question": "Quand a lieu le stage d'observation de seconde ?", "expected": "stages-et-calendrier.md"},
+  {"role": "student", "question": "Qui est le référent pour les stages ?", "expected": "stages-et-calendrier.md"},
+  {"role": "student", "question": "Jusqu'à quand puis-je demander une bourse ?", "expected": "stages-et-calendrier.md"},
+  {"role": "student", "question": "Quel est le budget prévu pour rénover les salles de sciences ?", "forbidden": ["note-interne-budget.md"]},
+  {"role": "student", "question": "Quelle est la date de l'exercice PPMS ?", "forbidden": ["note-interne-budget.md"]},
+  {"role": "direction", "question": "Quel est le budget prévu pour rénover les salles de sciences ?", "expected": "note-interne-budget.md"},
+  {"role": "direction", "question": "Combien de postes d'assistants d'éducation sont ouverts ?", "expected": "note-interne-budget.md"},
+  {"role": "direction", "question": "Quelles sanctions sont prévues par le règlement ?", "expected": "reglement-interieur.md"}
+]
