@@ -1,10 +1,2 @@
-fastapi
-uvicorn
-qdrant-client
-httpx
-pydantic
-python-multipart
-sentence-transformers
-pymupdf
-numpy
-scikit-learn
+-r requirements-base.txt
+sentence-transformers>=3.0
