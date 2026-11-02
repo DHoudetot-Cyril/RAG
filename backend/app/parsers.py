@@ -40,10 +40,10 @@ def clean_text(text: str) -> str:
 
 
 def _parse_pdf(data: bytes) -> list[Section]:
-    import fitz  # PyMuPDF
+    import pymupdf
 
     sections = []
-    with fitz.open(stream=data, filetype="pdf") as doc:
+    with pymupdf.open(stream=data, filetype="pdf") as doc:
         for page_number, page in enumerate(doc, start=1):
             text = clean_text(page.get_text("text"))
             if text:

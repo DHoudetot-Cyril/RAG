@@ -21,8 +21,8 @@ def test_txt_latin1_fallback():
 
 
 def test_pdf_pages_are_numbered():
-    fitz = pytest.importorskip("fitz")
-    doc = fitz.open()
+    pymupdf = pytest.importorskip("pymupdf")
+    doc = pymupdf.open()
     for text in ("Page un : horaires", "Page deux : cantine"):
         page = doc.new_page()
         page.insert_text((72, 72), text)
