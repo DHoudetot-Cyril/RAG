@@ -1,28 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Met à jour le code et redéploie la stack (utilise le fichier .env).
+set -euo pipefail
+cd "$(dirname "$0")"
 
-echo "🚀 Début de la mise à jour et du déploiement..."
+echo "🚀 Mise à jour et déploiement de RAG École"
 
-# 1. Pull des derniers changements
-echo "📥 Récupération des changements Git..."
-git pull
-
-if [ $? -ne 0 ]; then
-    echo "❌ Erreur lors du git pull."
+if [ ! -f .env ]; then
+    cp .env.example .env
+    echo "⚠️  .env créé à partir de .env.example : modifiez les clés d'API puis relancez."
     exit 1
 fi
 
-# 2. Arrêt des conteneurs
-echo "🛑 Arrêt des conteneurs..."
-docker compose down
+echo "📥 Récupération du code..."
+git pull --ff-only
 
-# 3. Rebuild et redémarrage
-echo "🏗️ Reconstruction et démarrage des conteneurs..."
-docker compose up -d --build
+echo "🏗️  Construction et démarrage des conteneurs..."
+docker compose up -d --build --remove-orphans
 
-if [ $? -ne 0 ]; then
-    echo "❌ Erreur lors du déploiement Docker."
-    exit 1
-fi
+echo "🧹 Nettoyage des anciennes images..."
+docker image prune -f >/dev/null
 
-echo "✅ Déploiement terminé avec succès !"
+echo "✅ Déploiement terminé."
 docker compose ps
+echo
+echo "  Élève      : http://localhost:8501"
+echo "  Direction  : http://localhost:8502"
+echo "  Admin      : http://localhost:8503"
+echo "  API (docs) : http://localhost:8080/docs"

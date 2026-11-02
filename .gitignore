@@ -1,27 +1,27 @@
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.env
-.venv
-env/
+.venv/
 venv/
-ENV/
-env.bak/
-venv.bak/
-.idea/
-.vscode/
-*swp
-.DS_Store
+.pytest_cache/
+.ruff_cache/
+
+# Secrets & configuration locale
+.env
+
+# Données
 qdrant_data/
 huggingface_cache/
-ingestion_data/
+/documents/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Outils
 _bmad-output/
 .agent/*
 _bmad/*
 .claude/*
-test_qdrant.py
-lscpu
-numactl--hardware
-nvidia-smi-q
-topo-m

@@ -1,26 +1,24 @@
-Write-Host "🚀 Début de la mise à jour et du déploiement..." -ForegroundColor Green
+# Met à jour le code et redéploie la stack (utilise le fichier .env).
+$ErrorActionPreference = "Stop"
+Set-Location $PSScriptRoot
 
-# 1. Pull des derniers changements
-Write-Host "📥 Récupération des changements Git..." -ForegroundColor Cyan
-git pull
+Write-Host "🚀 Mise à jour et déploiement de RAG École" -ForegroundColor Green
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Erreur lors du git pull." -ForegroundColor Red
+if (-not (Test-Path .env)) {
+    Copy-Item .env.example .env
+    Write-Host "⚠️  .env créé à partir de .env.example : modifiez les clés d'API puis relancez." -ForegroundColor Yellow
     exit 1
 }
 
-# 2. Arrêt des conteneurs
-Write-Host "🛑 Arrêt des conteneurs..." -ForegroundColor Yellow
-docker compose down
+Write-Host "📥 Récupération du code..." -ForegroundColor Cyan
+git pull --ff-only
+if ($LASTEXITCODE -ne 0) { Write-Host "❌ Échec du git pull." -ForegroundColor Red; exit 1 }
 
-# 3. Rebuild et redémarrage
-Write-Host "🏗️ Reconstruction et démarrage des conteneurs..." -ForegroundColor Cyan
-docker compose up -d --build
+Write-Host "🏗️  Construction et démarrage des conteneurs..." -ForegroundColor Cyan
+docker compose up -d --build --remove-orphans
+if ($LASTEXITCODE -ne 0) { Write-Host "❌ Échec du déploiement Docker." -ForegroundColor Red; exit 1 }
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Erreur lors du déploiement Docker." -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "✅ Déploiement terminé avec succès !" -ForegroundColor Green
+docker image prune -f | Out-Null
+Write-Host "✅ Déploiement terminé." -ForegroundColor Green
 docker compose ps
+Write-Host "`n  Élève      : http://localhost:8501`n  Direction  : http://localhost:8502`n  Admin      : http://localhost:8503`n  API (docs) : http://localhost:8080/docs"

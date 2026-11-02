@@ -1,96 +1,109 @@
+name: rag-ecole
+
+# Configuration : copier .env.example en .env puis l'adapter.
+# - Avec GPU NVIDIA : COMPOSE_PROFILES=gpu lance aussi vLLM.
+# - Sans GPU : laisser COMPOSE_PROFILES vide et pointer LLM_BASE_URL vers un serveur
+#   compatible OpenAI (Ollama, llama.cpp, LM Studio, API distante...).
+
+x-frontend: &frontend
+  build: ./frontend
+  image: rag-ecole-frontend
+  restart: unless-stopped
+  depends_on:
+    - backend
+  networks:
+    - rag-network
+
 services:
-  # 1. GPU Inference Engine (vLLM)
+  # 1. Moteur d'inférence LLM (GPU) — optionnel, profil "gpu"
   vllm:
-    image: vllm/vllm-openai:latest
-    container_name: rag-vllm
-    runtime: nvidia
+    profiles: ["gpu"]
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:v0.8.5}
+    restart: unless-stopped
     environment:
-      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-}
     volumes:
-      - huggingface_cache:/root/.cache/huggingface
+      - vllm_cache:/root/.cache/huggingface
     ports:
-      - "8000:8000"
-    command: "--model Qwen/Qwen2.5-7B-Instruct --gpu-memory-utilization 0.85 --max-model-len 4096"
+      - "127.0.0.1:8000:8000"
+    ipc: host
+    command: >
+      --model ${LLM_MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}
+      --gpu-memory-utilization ${VLLM_GPU_MEMORY_UTILIZATION:-0.85}
+      --max-model-len ${VLLM_MAX_MODEL_LEN:-8192}
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [ gpu ]
+              capabilities: [gpu]
     networks:
       - rag-network
 
-  # 2. Vector Database (Qdrant)
+  # 2. Base de données vectorielle
   qdrant:
-    image: qdrant/qdrant:latest
-    container_name: rag-qdrant
+    image: qdrant/qdrant:${QDRANT_VERSION:-v1.13.0}
+    restart: unless-stopped
     ports:
-      - "6333:6333"
+      - "127.0.0.1:6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
     networks:
       - rag-network
 
-  # 3. Backend API (FastAPI)
+  # 3. API FastAPI (RAG, ingestion, contrôle d'accès)
   backend:
-    build:
-      context: ./backend
-    container_name: rag-backend
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
     environment:
-      - QDRANT_HOST=qdrant
-      - QDRANT_PORT=6333
-      - VLLM_HOST=vllm
-      - VLLM_PORT=8000
+      - QDRANT_URL=http://qdrant:6333
+      - LLM_BASE_URL=${LLM_BASE_URL:-http://vllm:8000/v1}
+    volumes:
+      - embeddings_cache:/models
     ports:
       - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # pour un LLM lancé sur la machine hôte
     depends_on:
-      - qdrant
-      - vllm
+      qdrant:
+        condition: service_started
+      vllm:
+        condition: service_started
+        required: false
     networks:
       - rag-network
 
-  # 4. Frontend Student (Chat Only)
+  # 4. Interface Élève (niveau 1)
   frontend-student:
-    build:
-      context: ./frontend-student
-    container_name: rag-frontend-student
+    <<: *frontend
     environment:
+      - APP=student.py
       - BACKEND_URL=http://backend:8080
+      - STUDENT_API_KEY=${STUDENT_API_KEY}
     ports:
       - "8501:8501"
-    depends_on:
-      - backend
-    networks:
-      - rag-network
 
-  # 5. Frontend Direction (Chat + Docs)
+  # 5. Interface Direction (niveaux 1 + 2)
   frontend-direction:
-    build:
-      context: ./frontend-direction
-    container_name: rag-frontend-direction
+    <<: *frontend
     environment:
+      - APP=direction.py
       - BACKEND_URL=http://backend:8080
+      - DIRECTION_API_KEY=${DIRECTION_API_KEY}
     ports:
-      - "8502:8501" # Mapped to 8502 on host
-    depends_on:
-      - backend
-    networks:
-      - rag-network
+      - "8502:8501"
 
-  # 6. Ingestion UI (Admin)
+  # 6. Interface d'administration (ingestion)
   ingestion-ui:
-    build:
-      context: ./ingestion-ui
-    container_name: rag-ingestion-ui
+    <<: *frontend
     environment:
+      - APP=admin.py
       - BACKEND_URL=http://backend:8080
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
     ports:
-      - "8503:8501" # Mapped to 8503 on host
-    depends_on:
-      - backend
-    networks:
-      - rag-network
+      - "8503:8501"
 
 networks:
   rag-network:
@@ -98,4 +111,5 @@ networks:
 
 volumes:
   qdrant_data:
-  huggingface_cache:
+  vllm_cache:
+  embeddings_cache:
