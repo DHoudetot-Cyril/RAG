@@ -242,6 +242,6 @@ des tests, une CI et une évaluation.
 
 ## 👤 Auteur
 
-**Cyril D'houdetot** · [GitHub](https://github.com/DHoudetot-Cyril)
+**Cyril D'Houdetot** · [GitHub](https://github.com/DHoudetot-Cyril)
 
 Distribué sous licence [MIT](LICENSE).
