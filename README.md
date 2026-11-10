@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/DHoudetot-Cyril/RAG/actions/workflows/ci.yml"><img src="https://github.com/DHoudetot-Cyril/RAG/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/DHoudetot-Cyril/rag-ecole/actions/workflows/ci.yml"><img src="https://github.com/DHoudetot-Cyril/rag-ecole/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white" alt="Python 3.11">
   <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/Qdrant-DC244C?logo=qdrant&logoColor=white" alt="Qdrant">
@@ -74,8 +74,8 @@ flowchart LR
 ### Installation
 
 ```bash
-git clone https://github.com/DHoudetot-Cyril/RAG.git
-cd RAG
+git clone https://github.com/DHoudetot-Cyril/rag-ecole.git
+cd rag-ecole
 cp .env.example .env      # puis changez les trois clés d'API
 ```
 
